@@ -1,9 +1,10 @@
-import { Logger, NotFoundException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { AbstractDocument } from './abstract.schema';
 import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
+import { Logger } from 'nestjs-pino';
 
 export abstract class AbstractRepository<TDocument extends AbstractDocument> {
-  private readonly logger: Logger;
+  protected readonly logger: Logger;
 
   constructor(protected readonly model: Model<TDocument>) {}
 
