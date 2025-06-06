@@ -1,0 +1,45 @@
+services:
+  reservations:
+    build:
+      context: .
+      dockerfile: ./apps/reservations/Dockerfile
+      target: development
+    command: pnpm start:dev reservations
+    ports:
+      - '3000:3000'
+    env_file:
+      - ./apps/reservations/.env
+    depends_on:
+      - mongo
+
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    command: pnpm start:dev auth
+    ports:
+      - '3001:3001' # HTTP port
+      - '3002:3002' # TCP port
+    env_file:
+      - ./apps/auth/.env
+    depends_on:
+      - mongo
+
+  payments:
+    build:
+      context: .
+      dockerfile: ./apps/payments/Dockerfile
+      target: development
+    command: pnpm start:dev payments
+    ports:
+      - '3003:3003'
+    env_file:
+      - ./apps/payments/.env
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
