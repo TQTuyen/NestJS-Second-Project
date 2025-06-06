@@ -3,9 +3,13 @@ import { ReservationsModule } from './reservations.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(ReservationsModule);
+
+  // use cookie parser middleware to handle cookies
+  app.use(cookieParser());
 
   // use global logger
   app.useLogger(app.get(Logger));
@@ -28,7 +32,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); // /api là đường dẫn tài liệu
 
-  await app.listen(process.env.port ?? 3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 
 bootstrap().catch((err) => {
