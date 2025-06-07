@@ -1,6 +1,14 @@
-import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsDate,
+  IsDefined,
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import { CreateChargeDto } from '@app/common';
 
 export class CreateReservationDto {
   // swagger decorators are used to document the API
@@ -42,4 +50,13 @@ export class CreateReservationDto {
   @IsString()
   @IsNotEmpty()
   invoiceId: string;
+
+  @ApiProperty({
+    description: 'The charge details for the reservation',
+    type: CreateChargeDto,
+  })
+  @IsDefined()
+  @IsNotEmptyObject()
+  @ValidateNested()
+  charge: CreateChargeDto;
 }
