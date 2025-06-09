@@ -13,6 +13,8 @@ COPY . .
 
 RUN pnpm run build
 
+EXPOSE 3000
+
 FROM node:slim AS production
 
 ARG NODE_ENV=production

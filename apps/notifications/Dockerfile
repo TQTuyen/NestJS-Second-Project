@@ -16,12 +16,9 @@ COPY . .
 
 RUN pnpm run build
 
+EXPOSE 3004
+
 FROM node:slim AS production
-
-EXPOSE 3001
-
-# Install procps package which includes ps command needed by NestJS
-RUN apt-get update && apt-get install -y procps && rm -rf /var/lib/apt/lists/*
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
@@ -37,4 +34,4 @@ RUN pnpm install --prod
 
 COPY --from=development /usr/src/app/dist ./dist
 
-CMD ["node", "dist/apps/auth/main"]
+CMD ["node", "dist/apps/notifications/main"]

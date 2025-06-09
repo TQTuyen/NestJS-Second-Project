@@ -1,8 +1,14 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
-import { CreateChargeDto } from '@app/common';
+import { NOTIFICATIONS_SERVICE } from '@app/common';
 import { Logger } from 'nestjs-pino';
+import { ClientProxy } from '@nestjs/microservices';
+import { PaymentsCreateChargeDto } from './dto/payments-create-charge.dto';
 
 @Injectable()
 export class PaymentsService {
@@ -11,6 +17,8 @@ export class PaymentsService {
   constructor(
     private readonly configService: ConfigService,
     private readonly logger: Logger,
+    @Inject(NOTIFICATIONS_SERVICE)
+    private readonly notificationsService: ClientProxy,
   ) {
     this.stripe = new Stripe(
       this.configService.get<string>('STRIPE_SECRET_KEY')!,
@@ -25,24 +33,14 @@ export class PaymentsService {
     );
   }
 
-  async createCharge({ card, amount }: CreateChargeDto) {
+  async createCharge({ card, amount, email }: PaymentsCreateChargeDto) {
     try {
-      this.logger.log(
-        `Creating charge with:: ${card.token} for amount:: ${amount}`,
-        PaymentsService.name,
-      );
-
       const paymentMethod = await this.stripe.paymentMethods.create({
         type: 'card',
         card: {
           token: card.token,
         },
       });
-
-      this.logger.log(
-        `Payment method created:: ${paymentMethod.id}`,
-        PaymentsService.name,
-      );
 
       const paymentIntent = await this.stripe.paymentIntents.create({
         payment_method: paymentMethod.id,
@@ -55,10 +53,14 @@ export class PaymentsService {
         currency: 'usd',
       });
 
-      this.logger.log(
-        `Payment intent created:: ${paymentIntent.amount}`,
-        PaymentsService.name,
-      );
+      this.notificationsService.emit('notify_email', {
+        email,
+        subject: 'Payment Successful - Sleepr',
+        text: `Your payment of $${amount} was successful! Thank you for using Sleepr.`,
+        amount,
+        transactionId: paymentIntent.id,
+        date: new Date().toISOString(),
+      });
 
       return paymentIntent;
     } catch (error) {

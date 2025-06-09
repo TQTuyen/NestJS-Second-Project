@@ -1,0 +1,330 @@
+<!-- filepath: /home/tqots/wrkspa/NestJS-Second-Project/apps/notifications/src/public/index.hbs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{subject}}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 2px, transparent 2px);
+            background-size: 20px 20px;
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .logo {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            backdrop-filter: blur(20px);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo::after {
+            content: '🏨';
+            font-size: 32px;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .success-icon {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .success-icon .icon {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border-radius: 50%;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .success-icon .icon::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .message {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #ff6b6b;
+        }
+        
+        .message h2 {
+            color: #d63031;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .message p {
+            color: #636e72;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+        
+        .details {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .details h3 {
+            color: #2d3436;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .details h3::before {
+            content: '📋';
+            margin-right: 10px;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: #636e72;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            color: #2d3436;
+            font-weight: 600;
+        }
+        
+        .cta-button {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .footer {
+            background: #2d3436;
+            color: #b2bec3;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .footer p {
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .social-links {
+            margin: 20px 0;
+        }
+        
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #74b9ff;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #ddd, transparent);
+            margin: 30px 0;
+        }
+        
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header, .content, .footer {
+                padding: 25px 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .message h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo"></div>
+            <h1>Sleepr</h1>
+            <p>Your Premium Hotel Booking Platform</p>
+        </div>
+        
+        <div class="content">
+            <div class="success-icon">
+                <div class="icon"></div>
+            </div>
+            
+            <div class="message">
+                <h2>{{subject}}</h2>
+                <p>{{text}}</p>
+            </div>
+            
+            {{#if amount}}
+            <div class="details">
+                <h3>Transaction Details</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Amount Paid </span>
+                    <span class="detail-value">${{amount}}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Transaction ID </span>
+                    <span class="detail-value">{{transactionId}}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Date </span>
+                    <span class="detail-value">{{date}}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Status </span>
+                    <span class="detail-value" style="color: #00b894;">✓ Confirmed</span>
+                </div>
+            </div>
+            {{/if}}
+            
+            <div class="divider"></div>
+            
+            <div class="cta-button">
+                <a href="https://sleepr.com/bookings" class="btn">View My Bookings</a>
+            </div>
+            
+            <p style="text-align: center; color: #636e72; font-size: 14px; margin-top: 20px;">
+                Need help? Reply to this email or contact our support team.
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Thank you for choosing Sleepr!</strong></p>
+            <p>We're here to make your travel experiences unforgettable.</p>
+            
+            <div class="social-links">
+                <a href="#">📧</a>
+                <a href="#">📱</a>
+                <a href="#">🌐</a>
+            </div>
+            
+            <p style="font-size: 12px; margin-top: 20px;">
+                © 2025 Sleepr. All rights reserved.<br>
+                This email was sent to {{email}}
+            </p>
+        </div>
+    </div>
+</body>
+</html>
