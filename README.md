@@ -57,57 +57,44 @@ pnpm install
 
 Create environment files for each service:
 
-#### `.env` (Root)
-
-```env
-# Database
-MONGODB_URI=mongodb://mongo:27017/sleepr
-
-# JWT
-JWT_SECRET=your-super-secret-jwt-key
-JWT_EXPIRATION=3600
-
-# Services URLs
-AUTH_SERVICE_URL=http://auth:3001
-PAYMENTS_SERVICE_URL=http://payments:3002
-NOTIFICATIONS_SERVICE_URL=http://notifications:3003
-```
-
 #### `apps/reservations/.env`
 
 ```env
 PORT=3000
-MONGODB_URI=mongodb://mongo:27017/sleepr
-JWT_SECRET=your-super-secret-jwt-key
-AUTH_SERVICE_URL=http://auth:3001
-PAYMENTS_SERVICE_URL=http://payments:3002
+MONGODB_URI=mongodb://mongo:27017/reservations
+AUTH_HOST=auth
+AUTH_PORT=3002
+PAYMENTS_HOST=payments
+PAYMENTS_PORT=3003
 ```
 
 #### `apps/auth/.env`
 
 ```env
-PORT=3001
-MONGODB_URI=mongodb://mongo:27017/sleepr
-JWT_SECRET=your-super-secret-jwt-key
+MONGODB_URI=mongodb://mongo:27017/auth
+JWT_SECRET=your-secret
 JWT_EXPIRATION=3600
+HTTP_PORT=3001
+TCP_PORT=3002
 ```
 
 #### `apps/payments/.env`
 
 ```env
-PORT=3002
-STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
-NOTIFICATIONS_SERVICE_URL=http://notifications:3003
+PORT=3003
+STRIPE_SECRET_KEY=sk_test-your-stripe-secret-key
+NOTIFICATIONS_HOST=notifications
+NOTIFICATIONS_PORT=3004
 ```
 
 #### `apps/notifications/.env`
 
 ```env
-PORT=3003
-SMTP_USER=your-email@gmail.com
-GOOGLE_OAUTH_CLIENT_ID=your-google-oauth-client-id
-GOOGLE_OAUTH_CLIENT_SECRET=your-google-oauth-client-secret
-GOOGLE_OAUTH_REFRESH_TOKEN=your-google-oauth-refresh-token
+PORT=3004
+GOOGLE_OAUTH_CLIENT_ID=your-client-id
+GOOGLE_OAUTH_CLIENT_SECRET=your-client-secret
+GOOGLE_OAUTH_REFRESH_TOKEN=your-refresh-token
+SMTP_USER=your-email
 ```
 
 ### 4. Stripe Setup
