@@ -1,9 +1,7 @@
 import {
   IsDate,
   IsDefined,
-  IsNotEmpty,
   IsNotEmptyObject,
-  IsString,
   ValidateNested,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
@@ -34,29 +32,12 @@ export class CreateReservationDto {
   endDate: Date;
 
   @ApiProperty({
-    description: 'The ID of the user making the reservation',
-    type: String,
-    example: 'user-123',
-  })
-  @IsString()
-  @IsNotEmpty()
-  placeId: string;
-
-  @ApiProperty({
-    description: 'The ID of the invoice associated with the reservation',
-    type: String,
-    example: 'invoice-456',
-  })
-  @IsString()
-  @IsNotEmpty()
-  invoiceId: string;
-
-  @ApiProperty({
     description: 'The charge details for the reservation',
     type: CreateChargeDto,
   })
   @IsDefined()
   @IsNotEmptyObject()
   @ValidateNested()
+  @Type(() => CreateChargeDto)
   charge: CreateChargeDto;
 }

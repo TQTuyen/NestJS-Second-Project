@@ -1,12 +1,15 @@
 import {
+  IsCreditCard,
   IsDefined,
   IsNotEmpty,
   IsNotEmptyObject,
   IsNumber,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
 import { CardNetWorkDto } from './card-network.dto';
+import { Type } from 'class-transformer';
 
 export class CardDto {
   @IsString()
@@ -22,12 +25,13 @@ export class CardDto {
   @IsDefined()
   @IsNotEmptyObject()
   @ValidateNested()
+  @Type(() => CardNetWorkDto)
   networks: CardNetWorkDto;
 
-  @IsNumber()
-  @IsNotEmpty()
+  @IsCreditCard()
   number: string;
 
   @IsString()
+  @IsOptional()
   token: string;
 }
