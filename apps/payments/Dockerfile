@@ -1,7 +1,4 @@
-FROM node:slim AS development
-
-# Install procps package which includes ps command needed by NestJS
-RUN apt-get update && apt-get install -y procps && rm -rf /var/lib/apt/lists/*
+FROM node:24-alpine AS development
 
 WORKDIR /usr/src/app
 
@@ -18,7 +15,7 @@ RUN pnpm run build
 
 EXPOSE 3003
 
-FROM node:slim AS production
+FROM node:24-alpine AS production
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}

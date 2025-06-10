@@ -1,4 +1,4 @@
-FROM node:slim AS development
+FROM node:24-alpine AS development
 
 WORKDIR /usr/src/app
 
@@ -15,7 +15,7 @@ RUN pnpm run build
 
 EXPOSE 3000
 
-FROM node:slim AS production
+FROM node:24-alpine AS production
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}

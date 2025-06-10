@@ -1,7 +1,6 @@
-FROM node:slim AS development
+FROM node:24-alpine AS development
 
-# Install procps package which includes ps command needed by NestJS
-RUN apt-get update && apt-get install -y procps && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache python3 make g++ && ln -sf python3 /usr/bin/python
 
 WORKDIR /usr/src/app
 
@@ -16,12 +15,11 @@ COPY . .
 
 RUN pnpm run build
 
-FROM node:slim AS production
+FROM node:24-alpine AS production
 
 EXPOSE 3001
 
-# Install procps package which includes ps command needed by NestJS
-RUN apt-get update && apt-get install -y procps && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache python3 make g++ && ln -sf python3 /usr/bin/python
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
