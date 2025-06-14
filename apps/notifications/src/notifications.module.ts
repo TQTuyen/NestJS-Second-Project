@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { NotificationsController } from './notifications.controller';
 import { NotificationsService } from './notifications.service';
-import { LoggerModule } from '@app/common';
+import { HealthModule, LoggerModule } from '@app/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 
@@ -18,6 +18,7 @@ import * as Joi from 'joi';
         SMTP_USER: Joi.string().email().required(),
       }),
     }),
+    HealthModule,
   ],
   controllers: [NotificationsController],
   providers: [NotificationsService],

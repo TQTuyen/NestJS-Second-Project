@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: notifications
+  name: notifications
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notifications
+  template:
+    metadata:
+      labels:
+        app: notifications
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - image: nestjsregistry.azurecr.io/notifications/notifications:v1
+        name: notifications
+        env:
+        - name: PORT
+          value: "3000"
+        - name: GOOGLE_OAUTH_CLIENT_ID
+          value: 226724487390-sc4skc2101mge19fvbojrb87fjv9veo4.apps.googleusercontent.com
+        - name: SMTP_USER
+          value: tranquangtuyen135305@gmail.com
+        - name: GOOGLE_OAUTH_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: google
+              key: clientSecret
+        - name: GOOGLE_OAUTH_REFRESH_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: google
+              key: refreshToken
+        ports:
+        - containerPort: 3000

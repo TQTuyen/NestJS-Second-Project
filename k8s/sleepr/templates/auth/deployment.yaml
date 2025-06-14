@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: auth
+  name: auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - image: nestjsregistry.azurecr.io/auth/auth:v1
+        name: auth
+        env:
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: mongodb
+              key: connectionString
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: jwt
+              key: jwtSecret
+        - name: JWT_EXPIRATION
+          value: "3600"
+        - name: HTTP_PORT
+          value: "3002"
+        - name: TCP_PORT
+          value: "3003"
+        ports:
+        - containerPort: 3002
+        - containerPort: 3003
