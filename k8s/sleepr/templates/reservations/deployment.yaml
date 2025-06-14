@@ -17,7 +17,7 @@ spec:
       imagePullSecrets:
       - name: acr-secret
       containers:
-      - image: nestjsregistry.azurecr.io/reservations/reservations:v1
+      - image: nestjsregistry.azurecr.io/reservations/reservations:v2
         name: reservations
         env:
         - name: MONGODB_URI

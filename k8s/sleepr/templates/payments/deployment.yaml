@@ -17,7 +17,7 @@ spec:
       imagePullSecrets:
       - name: acr-secret
       containers:
-      - image: nestjsregistry.azurecr.io/payments/payments:v1
+      - image: nestjsregistry.azurecr.io/payments/payments:v2
         name: payments
         env:
         - name: PORT

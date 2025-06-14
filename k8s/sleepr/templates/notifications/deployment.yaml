@@ -17,7 +17,7 @@ spec:
       imagePullSecrets:
       - name: acr-secret
       containers:
-      - image: nestjsregistry.azurecr.io/notifications/notifications:v1
+      - image: nestjsregistry.azurecr.io/notifications/notifications:v2
         name: notifications
         env:
         - name: PORT
