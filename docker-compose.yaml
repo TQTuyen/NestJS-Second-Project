@@ -3,8 +3,8 @@ services:
     build:
       context: .
       dockerfile: ./apps/reservations/Dockerfile
-      target: development
-    command: pnpm start:dev reservations
+      # target: development
+    # command: pnpm start:prod reservations
     ports:
       - '3000:3000'
     env_file:
@@ -16,8 +16,8 @@ services:
     build:
       context: .
       dockerfile: ./apps/auth/Dockerfile
-      target: development
-    command: pnpm start:dev auth
+      # target: development
+    # command: pnpm start:dev auth
     ports:
       - '3001:3001'
     env_file:
@@ -29,8 +29,8 @@ services:
     build:
       context: .
       dockerfile: ./apps/payments/Dockerfile
-      target: development
-    command: pnpm start:dev payments
+      # target: development
+    # command: pnpm start:dev payments
     env_file:
       - ./apps/payments/.env
 
@@ -38,8 +38,8 @@ services:
     build:
       context: .
       dockerfile: ./apps/notifications/Dockerfile
-      target: development
-    command: pnpm start:dev notifications
+      # target: development
+    # command: pnpm start:dev notifications
     env_file:
       - ./apps/notifications/.env
 

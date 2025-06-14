@@ -6,6 +6,12 @@ import { Request } from 'express';
 import { tap, map, catchError } from 'rxjs/operators';
 import { UserDto } from '../dto';
 
+declare module 'express' {
+  interface Request {
+    user?: UserDto; // Extend the Request interface to include user
+  }
+}
+
 export class JwtAuthGuard implements CanActivate {
   constructor(@Inject(AUTH_SERVICE) private readonly authClient: ClientProxy) {}
 
@@ -23,8 +29,7 @@ export class JwtAuthGuard implements CanActivate {
         Authentication: jwt,
       })
       .pipe(
-        tap((res: any) => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        tap((res: UserDto) => {
           request.user = res;
         }),
         map(() => true),
