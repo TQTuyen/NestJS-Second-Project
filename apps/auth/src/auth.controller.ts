@@ -14,8 +14,8 @@ export class AuthController {
   @Post('login')
   @UseGuards(LocalAuthGuard)
   async login(@CurrentUser() user: UserDocument, @Res() res: Response) {
-    await this.authService.login(user, res);
-    res.send(user);
+    const token = await this.authService.login(user, res);
+    res.send(token);
   }
 
   @MessagePattern('authenticate')

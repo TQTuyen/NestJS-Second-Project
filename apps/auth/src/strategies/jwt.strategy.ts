@@ -15,8 +15,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-        (req: any) => req?.cookies?.['Authentication'] || req?.Authentication,
+        (req: any) =>
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+          req?.cookies?.['Authentication'] ||
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          req?.Authentication ||
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          req?.headers?.['authentication'],
       ]),
       secretOrKey: configService.get<string>('JWT_SECRET')!,
     });
