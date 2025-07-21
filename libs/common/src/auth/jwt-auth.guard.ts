@@ -1,10 +1,17 @@
-import { CanActivate, ExecutionContext, Inject } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Inject,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Observable, of } from 'rxjs';
 import { AUTH_SERVICE } from '../constants/services';
 import { ClientProxy } from '@nestjs/microservices';
 import { Request } from 'express';
 import { tap, map, catchError } from 'rxjs/operators';
 import { UserDto } from '../dto';
+import { Reflector } from '@nestjs/core';
+import { Logger } from 'nestjs-pino';
 
 declare module 'express' {
   interface Request {
@@ -13,7 +20,11 @@ declare module 'express' {
 }
 
 export class JwtAuthGuard implements CanActivate {
-  constructor(@Inject(AUTH_SERVICE) private readonly authClient: ClientProxy) {}
+  constructor(
+    @Inject(AUTH_SERVICE) private readonly authClient: ClientProxy,
+    private readonly reflector: Reflector,
+    private readonly logger: Logger,
+  ) {}
 
   canActivate(
     context: ExecutionContext,
@@ -26,16 +37,26 @@ export class JwtAuthGuard implements CanActivate {
       return false;
     }
 
+    const roles = this.reflector.get<string[]>('roles', context.getHandler());
+
     return this.authClient
       .send<UserDto>('authenticate', {
         Authentication: jwt,
       })
       .pipe(
         tap((res: UserDto) => {
+          if (roles && !roles.some((role) => res.roles?.includes(role))) {
+            this.logger.error('The user have not valid roles');
+            throw new UnauthorizedException();
+          }
+
           request.user = res;
         }),
         map(() => true),
-        catchError(() => of(false)), // Handle errors gracefully
+        catchError((err) => {
+          this.logger.error(err);
+          return of(false);
+        }), // Handle errors gracefully
         // If the authentication fails, return false
         // If the authentication is successful, return true
       );

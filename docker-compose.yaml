@@ -3,10 +3,11 @@ services:
     build:
       context: .
       dockerfile: ./apps/reservations/Dockerfile
-      # target: development
-    # command: pnpm start:prod reservations
+      target: reservations-development
+    command: pnpm start:debug reservations
     ports:
-      - '3000:3000'
+      - '3000:3000' # Application port
+      - '9229:9229' # Debugging port
     env_file:
       - ./apps/reservations/.env
     depends_on:

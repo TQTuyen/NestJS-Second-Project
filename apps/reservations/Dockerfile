@@ -12,6 +12,7 @@ COPY nest-cli.json ./
 
 # Install pnpm globally
 RUN npm install -g pnpm
+RUN npm install -g @nestjs/cli
 
 # Install dependencies
 RUN pnpm install
