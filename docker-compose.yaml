@@ -44,7 +44,12 @@ services:
     env_file:
       - ./apps/notifications/.env
 
-  mongo:
-    image: mongo:latest
+  # mongo:
+  #   image: mongo:latest
+  #   ports:
+  #     - '27017:27017'
+
+  mysql:
+    image: mysql:latest
     ports:
-      - '27017:27017'
+      - '3006:3006'

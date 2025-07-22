@@ -12,7 +12,7 @@ import {
 import { ReservationsService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
-import { JwtAuthGuard, Roles, UserDto } from '@app/common';
+import { JwtAuthGuard, Roles, User } from '@app/common';
 import { CurrentUser } from '@app/common';
 
 @Controller('reservations')
@@ -23,7 +23,7 @@ export class ReservationsController {
   @UseGuards(JwtAuthGuard)
   create(
     @Body() createReservationDto: CreateReservationDto,
-    @CurrentUser() user: UserDto,
+    @CurrentUser() user: User,
   ) {
     return this.reservationsService.create(createReservationDto, user);
   }
@@ -35,7 +35,7 @@ export class ReservationsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.reservationsService.findOne(id);
+    return this.reservationsService.findOne(+id);
   }
 
   @Patch(':id')
@@ -43,13 +43,13 @@ export class ReservationsController {
     @Param('id', new ValidationPipe()) id: string,
     @Body() updateReservationDto: UpdateReservationDto,
   ) {
-    return this.reservationsService.update(id, updateReservationDto);
+    return this.reservationsService.update(+id, updateReservationDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Roles(['admin'])
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.reservationsService.remove(id);
+    return this.reservationsService.remove(+id);
   }
 }

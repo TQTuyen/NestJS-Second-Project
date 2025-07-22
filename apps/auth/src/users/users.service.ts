@@ -6,21 +6,23 @@ import {
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserDocument } from './models/user.schema';
 import * as bcrypt from 'bcrypt';
 import { GetUserDto } from './dto/get-user.dto';
+import { Role, User } from '@app/common';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async create(createUserDto: CreateUserDto): Promise<UserDocument> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     await this.validateCreateUserDto(createUserDto);
 
-    return this.usersRepository.create({
+    const user = new User({
       ...createUserDto,
       password: await bcrypt.hash(createUserDto.password, 10),
+      roles: createUserDto.roles.map((role) => new Role(role)),
     });
+    return this.usersRepository.create(user);
   }
 
   private async validateCreateUserDto(createUserDto: CreateUserDto) {
@@ -45,13 +47,15 @@ export class UsersService {
     return user;
   }
 
-  async getUser(getUserDto: GetUserDto): Promise<UserDocument> {
-    const userDocument = await this.usersRepository.findOne(getUserDto);
+  async getUser(getUserDto: GetUserDto): Promise<User> {
+    const User = await this.usersRepository.findOne(getUserDto, {
+      roles: true,
+    });
 
-    if (!userDocument) {
+    if (!User) {
       throw new NotFoundException('User not found');
     }
 
-    return userDocument;
+    return User;
   }
 }

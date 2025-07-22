@@ -15,7 +15,7 @@ import { HealthModule, LoggerModule } from '@app/common';
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
-        MONGODB_URI: Joi.string().required(),
+        // MONGODB_URI: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRATION: Joi.string().default('3600'), // Default to 1 hour
         HTTP_PORT: Joi.number().required(),

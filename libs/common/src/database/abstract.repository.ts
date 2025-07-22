@@ -1,78 +1,79 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { AbstractDocument } from './abstract.schema';
-import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
+import { AbstractEntity } from './abstract.entity';
 import { Logger } from 'nestjs-pino';
+import {
+  EntityManager,
+  FindOptionsRelations,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
-export abstract class AbstractRepository<TDocument extends AbstractDocument> {
+export abstract class AbstractRepository<T extends AbstractEntity<T>> {
   protected readonly logger: Logger;
 
-  constructor(protected readonly model: Model<TDocument>) {}
+  constructor(
+    protected readonly entityRepository: Repository<T>,
+    protected readonly entityManager: EntityManager,
+  ) {}
 
-  async create(document: Omit<TDocument, '_id'>): Promise<TDocument> {
-    const createdDocument = new this.model({
-      ...document,
-      _id: new Types.ObjectId(),
-    });
-    return (await createdDocument.save()).toJSON() as TDocument;
+  async create(entity: T): Promise<T> {
+    return await this.entityManager.save(entity);
   }
 
-  async findOne(filterQuery: FilterQuery<TDocument>): Promise<TDocument> {
-    const document = await this.model
-      .findOne(filterQuery)
-      .lean<TDocument>(true);
+  async findOne(
+    where: FindOptionsWhere<T>,
+    relations?: FindOptionsRelations<T>,
+  ): Promise<T> {
+    const entity = await this.entityRepository.findOne({ where, relations });
 
-    if (!document) {
+    if (!entity) {
       this.logger.warn(
-        `Document not found for filter: ${JSON.stringify(filterQuery)}`,
+        `Entity not found for where: ${JSON.stringify(where)}`,
         AbstractRepository.name,
       );
-      throw new NotFoundException('Document was not found!!!');
+      throw new NotFoundException('Entity was not found!!!');
     }
 
-    return document;
+    return entity;
   }
 
   async findOneAndUpdate(
-    filterQuery: FilterQuery<TDocument>,
-    update: UpdateQuery<TDocument>,
-  ): Promise<TDocument> {
-    const updatedDocument = await this.model
-      .findOneAndUpdate(filterQuery, update, {
-        new: true,
-      })
-      .lean<TDocument>(true);
+    where: FindOptionsWhere<T>,
+    partialEntity: QueryDeepPartialEntity<T>,
+  ): Promise<T> {
+    const updateResult = await this.entityRepository.update(
+      where,
+      partialEntity,
+    );
 
-    if (!updatedDocument) {
+    if (!updateResult.affected) {
       this.logger.warn(
-        `Document not found for update with filter: ${JSON.stringify(filterQuery)}`,
+        `Entity not found for update with where: ${JSON.stringify(where)}`,
         AbstractRepository.name,
       );
-      throw new NotFoundException('Document was not found for update!!!');
+      throw new NotFoundException('Entity was not found for update!!!');
     }
 
-    return updatedDocument;
+    return await this.findOne(where);
   }
 
-  async find(filterQuery: FilterQuery<TDocument>): Promise<TDocument[]> {
-    return await this.model.find(filterQuery).lean<TDocument[]>(true);
+  async find(where: FindOptionsWhere<T>): Promise<T[]> {
+    return await this.entityRepository.findBy(where);
   }
 
-  async findOneAndDelete(
-    filterQuery: FilterQuery<TDocument>,
-  ): Promise<TDocument> {
-    const deletedDocument = await this.model
-      .findOneAndDelete(filterQuery)
-      .lean<TDocument>(true);
+  async findOneAndDelete(where: FindOptionsWhere<T>): Promise<number> {
+    const deleteResult = await this.entityRepository.delete(where);
 
-    if (!deletedDocument) {
+    if (!deleteResult.affected) {
       this.logger.warn(
-        `Document not found for deletion with filter: ${JSON.stringify(filterQuery)}`,
+        `Entity not found for deletion with where: ${JSON.stringify(where)}`,
         AbstractRepository.name,
       );
-      throw new NotFoundException('Document was not found for deletion!!!');
+      throw new NotFoundException('Entity was not found for deletion!!!');
     }
 
-    return deletedDocument;
+    return deleteResult.affected;
   }
 }

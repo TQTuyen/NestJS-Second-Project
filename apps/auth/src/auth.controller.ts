@@ -1,8 +1,7 @@
 import { Controller, Post, UseGuards, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { CurrentUser } from '@app/common';
-import { UserDocument } from './users/models/user.schema';
+import { CurrentUser, User } from '@app/common';
 import { Response } from 'express';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -13,7 +12,7 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
-  async login(@CurrentUser() user: UserDocument, @Res() res: Response) {
+  async login(@CurrentUser() user: User, @Res() res: Response) {
     const token = await this.authService.login(user, res);
     res.send(token);
   }
