@@ -3,7 +3,12 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { CurrentUser, User } from '@app/common';
 import { Response } from 'express';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import {
+  Ctx,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
@@ -19,7 +24,12 @@ export class AuthController {
 
   @MessagePattern('authenticate')
   @UseGuards(JwtAuthGuard)
-  authenticate(@Payload() data: any) {
+  authenticate(@Payload() data: any, @Ctx() context: RmqContext) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const channel = context.getChannelRef();
+    const originalMsg = context.getMessage();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    channel.ack(originalMsg);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
     return data.user;
   }

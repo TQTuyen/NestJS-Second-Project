@@ -27,10 +27,9 @@ export class ReservationsService {
       })
       .pipe(
         map((res: { id: string }) => {
-          const reservation = new Reservation({
+          const reservation = Reservation.create({
             ...createReservationDto,
             invoiceId: res.id,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             userId,
             timestamp: new Date(),
           });

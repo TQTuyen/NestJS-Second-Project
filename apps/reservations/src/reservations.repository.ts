@@ -10,8 +10,7 @@ export class ReservationsRepository extends AbstractRepository<Reservation> {
   constructor(
     @InjectRepository(Reservation)
     protected readonly reservationsRepository: Repository<Reservation>,
-    @InjectEntityManager()
-    protected readonly entityManager: EntityManager,
+    @InjectEntityManager() protected readonly entityManager: EntityManager,
     protected readonly logger: Logger,
   ) {
     super(reservationsRepository, entityManager);

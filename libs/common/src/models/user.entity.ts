@@ -3,8 +3,8 @@ import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 import { Role } from './role.entity';
 
 @Entity()
-export class User extends AbstractEntity<User> {
-  @Column()
+export class User extends AbstractEntity {
+  @Column({ unique: true })
   email: string;
 
   @Column()

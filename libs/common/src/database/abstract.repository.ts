@@ -10,7 +10,7 @@ import {
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
-export abstract class AbstractRepository<T extends AbstractEntity<T>> {
+export abstract class AbstractRepository<T extends AbstractEntity> {
   protected readonly logger: Logger;
 
   constructor(
@@ -19,7 +19,7 @@ export abstract class AbstractRepository<T extends AbstractEntity<T>> {
   ) {}
 
   async create(entity: T): Promise<T> {
-    return await this.entityManager.save(entity);
+    return await this.entityRepository.save(entity);
   }
 
   async findOne(

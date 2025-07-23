@@ -3,28 +3,29 @@ services:
     build:
       context: .
       dockerfile: ./apps/reservations/Dockerfile
-      target: reservations-development
-    command: pnpm start:debug reservations
+    #   target: reservations-development
+    # command: pnpm start:debug reservations
     ports:
       - '3000:3000' # Application port
-      - '9229:9229' # Debugging port
+      # - '9229:9229' # Debugging port
     env_file:
       - ./apps/reservations/.env
     depends_on:
-      - mongo
+      - mysql
 
   auth:
     build:
       context: .
       dockerfile: ./apps/auth/Dockerfile
-      # target: development
-    # command: pnpm start:dev auth
+      target: auth-development
+    command: pnpm start:debug auth
     ports:
-      - '3001:3001'
+      - '3001:3001' # application port
+      - '9229:9229' # debugging port
     env_file:
       - ./apps/auth/.env
     depends_on:
-      - mongo
+      - mysql
 
   payments:
     build:
@@ -34,6 +35,8 @@ services:
     # command: pnpm start:dev payments
     env_file:
       - ./apps/payments/.env
+    depends_on:
+      - rabbitmq
 
   notifications:
     build:
@@ -43,6 +46,8 @@ services:
     # command: pnpm start:dev notifications
     env_file:
       - ./apps/notifications/.env
+    depends_on:
+      - rabbitmq
 
   # mongo:
   #   image: mongo:latest
@@ -53,3 +58,11 @@ services:
     image: mysql:latest
     ports:
       - '3006:3006'
+    command: --port=3006
+    env_file:
+      - .env
+
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - '5672:5672'

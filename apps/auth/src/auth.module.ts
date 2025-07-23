@@ -7,11 +7,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { HealthModule, LoggerModule } from '@app/common';
+import {
+  DatabaseModule,
+  HealthModule,
+  LoggerModule,
+  Role,
+  User,
+} from '@app/common';
 
 @Module({
   imports: [
     UsersModule,
+    DatabaseModule.forFeature([User, Role]),
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({

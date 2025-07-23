@@ -17,10 +17,10 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<User> {
     await this.validateCreateUserDto(createUserDto);
 
-    const user = new User({
+    const user = User.create({
       ...createUserDto,
       password: await bcrypt.hash(createUserDto.password, 10),
-      roles: createUserDto.roles.map((role) => new Role(role)),
+      roles: createUserDto.roles.map((role) => Role.create(role)),
     });
     return this.usersRepository.create(user);
   }
