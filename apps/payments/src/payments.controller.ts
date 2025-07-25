@@ -1,29 +1,18 @@
 import { Controller, UsePipes, ValidationPipe } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import {
-  Ctx,
-  MessagePattern,
-  Payload,
-  RmqContext,
-} from '@nestjs/microservices';
 import { PaymentsCreateChargeDto } from './dto/payments-create-charge.dto';
+import {
+  PaymentsServiceController,
+  PaymentsServiceControllerMethods,
+} from '@app/common';
 
 @Controller()
-export class PaymentsController {
+@PaymentsServiceControllerMethods()
+export class PaymentsController implements PaymentsServiceController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
-  @MessagePattern('create_charge')
   @UsePipes(new ValidationPipe())
-  async createCharge(
-    @Payload() paymentsCreateChargeDto: PaymentsCreateChargeDto,
-    @Ctx() context: RmqContext,
-  ) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const channel = context.getChannelRef();
-    const originalMsg = context.getMessage();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    channel.ack(originalMsg); // Acknowledge the message to RabbitMQ
-
+  async createCharge(paymentsCreateChargeDto: PaymentsCreateChargeDto) {
     return this.paymentsService.createCharge(paymentsCreateChargeDto);
   }
 }

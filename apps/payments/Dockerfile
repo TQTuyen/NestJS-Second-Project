@@ -57,5 +57,8 @@ RUN pnpm install --prod
 # Copy the built application from the development stage
 COPY --from=payments-development /usr/src/app/dist ./dist
 
+# Copy proto files and relevant proto files
+COPY proto proto
+
 # Run the application
 CMD ["node", "dist/apps/payments/main.js"]

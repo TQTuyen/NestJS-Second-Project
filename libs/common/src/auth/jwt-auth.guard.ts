@@ -2,29 +2,36 @@ import {
   CanActivate,
   ExecutionContext,
   Inject,
+  OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Observable, of } from 'rxjs';
-import { AUTH_SERVICE } from '../constants/services';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientGrpc } from '@nestjs/microservices';
 import { Request } from 'express';
 import { tap, map, catchError } from 'rxjs/operators';
 import { Reflector } from '@nestjs/core';
 import { Logger } from 'nestjs-pino';
-import { User } from '../models';
+import { AUTH_SERVICE_NAME, AuthServiceClient, UserMessage } from '../types';
 
 declare module 'express' {
   interface Request {
-    user?: User; // Extend the Request interface to include user
+    user?: UserMessage; // Extend the Request interface to include user
   }
 }
 
-export class JwtAuthGuard implements CanActivate {
+export class JwtAuthGuard implements CanActivate, OnModuleInit {
+  private authService: AuthServiceClient;
+
   constructor(
-    @Inject(AUTH_SERVICE) private readonly authClient: ClientProxy,
+    @Inject(AUTH_SERVICE_NAME) private readonly client: ClientGrpc,
     private readonly reflector: Reflector,
     private readonly logger: Logger,
   ) {}
+
+  onModuleInit() {
+    this.authService =
+      this.client.getService<AuthServiceClient>(AUTH_SERVICE_NAME);
+  }
 
   canActivate(
     context: ExecutionContext,
@@ -39,15 +46,15 @@ export class JwtAuthGuard implements CanActivate {
 
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
 
-    return this.authClient
-      .send<User>('authenticate', {
+    return this.authService
+      .authenticate({
         Authentication: jwt,
       })
       .pipe(
-        tap((res: User) => {
+        tap((res: UserMessage) => {
           if (
             roles &&
-            !roles.some((role) => res.roles?.map((r) => r.name)?.includes(role))
+            !roles.some((role) => res.roles?.map((r) => r)?.includes(role))
           ) {
             this.logger.error('The user have not valid roles');
             throw new UnauthorizedException();
@@ -59,9 +66,7 @@ export class JwtAuthGuard implements CanActivate {
         catchError((err) => {
           this.logger.error(err);
           return of(false);
-        }), // Handle errors gracefully
-        // If the authentication fails, return false
-        // If the authentication is successful, return true
+        }),
       );
   }
 }

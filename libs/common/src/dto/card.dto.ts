@@ -10,17 +10,18 @@ import {
 } from 'class-validator';
 import { CardNetWorkDto } from './card-network.dto';
 import { Type } from 'class-transformer';
+import { CardMessage } from '../types';
 
-export class CardDto {
+export class CardDto implements CardMessage {
   @IsString()
   @IsNotEmpty()
   cvc: string;
 
   @IsNumber()
-  exp_month: number;
+  expMonth: number;
 
   @IsNumber()
-  exp_year: number;
+  expYear: number;
 
   @IsDefined()
   @IsNotEmptyObject()

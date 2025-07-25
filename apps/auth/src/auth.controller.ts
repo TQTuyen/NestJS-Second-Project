@@ -1,18 +1,19 @@
 import { Controller, Post, UseGuards, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { CurrentUser, User } from '@app/common';
-import { Response } from 'express';
 import {
-  Ctx,
-  MessagePattern,
-  Payload,
-  RmqContext,
-} from '@nestjs/microservices';
+  AuthServiceController,
+  AuthServiceControllerMethods,
+  CurrentUser,
+  User,
+} from '@app/common';
+import { Response } from 'express';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { Payload } from '@nestjs/microservices';
 
 @Controller('auth')
-export class AuthController {
+@AuthServiceControllerMethods()
+export class AuthController implements AuthServiceController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
@@ -22,15 +23,17 @@ export class AuthController {
     res.send(token);
   }
 
-  @MessagePattern('authenticate')
   @UseGuards(JwtAuthGuard)
-  authenticate(@Payload() data: any, @Ctx() context: RmqContext) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const channel = context.getChannelRef();
-    const originalMsg = context.getMessage();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    channel.ack(originalMsg);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-    return data.user;
+  authenticate(@Payload() data: any) {
+    return {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      id: data.user.id,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      email: data.user.email,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      password: data.user.password,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
+      roles: data.user.roles?.map((role) => role.name),
+    };
   }
 }

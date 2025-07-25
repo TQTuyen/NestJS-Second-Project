@@ -1,13 +1,8 @@
 import { IsEnum, IsOptional } from 'class-validator';
+import { CardNetworkMessage, CardNetworkMessage_CardNetwork } from '../types';
 
-enum CardNetWork {
-  CARTES_BANCAIRES = 'cartes_bancaires',
-  MASTERCARD = 'mastercard',
-  VISA = 'visa',
-}
-
-export class CardNetWorkDto {
-  @IsEnum(CardNetWork)
+export class CardNetWorkDto implements CardNetworkMessage {
+  @IsEnum(CardNetworkMessage_CardNetwork)
   @IsOptional()
-  preferred: CardNetWork;
+  preferred: CardNetworkMessage_CardNetwork;
 }

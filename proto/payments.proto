@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package payments;
+
+service PaymentsService {
+    rpc CreateCharge (CreateChargeMessage) returns (CreateChargeResponse) {}
+}
+
+message CreateChargeMessage {
+    string email = 1;
+    int64 amount = 2;
+    CardMessage card = 3;
+}
+
+message CardMessage {
+    string cvc = 1;
+    int32 expMonth = 2;
+    int32 expYear = 3;
+    string number = 4;
+    string token = 5;
+    CardNetworkMessage networks = 6;
+}
+
+message CardNetworkMessage {
+    CardNetwork preferred = 1;
+
+    enum CardNetwork {
+        CARTES_BANCAIRES = 0;
+        MASTERCARD = 1;
+        VISA = 2;
+    }
+}
+
+message CreateChargeResponse {
+    string id = 1;
+}

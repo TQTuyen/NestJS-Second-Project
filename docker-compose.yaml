@@ -17,8 +17,8 @@ services:
     build:
       context: .
       dockerfile: ./apps/auth/Dockerfile
-      target: auth-development
-    command: pnpm start:debug auth
+    #   target: auth-development
+    # command: pnpm start:debug auth
     ports:
       - '3001:3001' # application port
       - '9229:9229' # debugging port

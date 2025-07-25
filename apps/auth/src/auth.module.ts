@@ -26,7 +26,6 @@ import {
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRATION: Joi.string().default('3600'), // Default to 1 hour
         HTTP_PORT: Joi.number().required(),
-        TCP_PORT: Joi.number().required(),
       }),
     }),
     JwtModule.registerAsync({
