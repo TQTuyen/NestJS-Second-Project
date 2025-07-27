@@ -21,7 +21,7 @@ services:
     # command: pnpm start:debug auth
     ports:
       - '3001:3001' # application port
-      - '9229:9229' # debugging port
+      # - '9229:9229' # debugging port
     env_file:
       - ./apps/auth/.env
     depends_on:
@@ -31,8 +31,8 @@ services:
     build:
       context: .
       dockerfile: ./apps/payments/Dockerfile
-      # target: development
-    # command: pnpm start:dev payments
+    #   target: payments-development
+    # command: pnpm start:debug payments
     env_file:
       - ./apps/payments/.env
     depends_on:

@@ -1,10 +1,10 @@
 import { Controller, UsePipes, ValidationPipe } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { PaymentsCreateChargeDto } from './dto/payments-create-charge.dto';
 import {
   PaymentsServiceController,
   PaymentsServiceControllerMethods,
 } from '@app/common';
+import { PaymentsCreateChargeDto } from './dto/payments-create-charge.dto';
 
 @Controller()
 @PaymentsServiceControllerMethods()

@@ -23,8 +23,8 @@ export class ReservationsService implements OnModuleInit {
   private paymentsService: PaymentsServiceClient;
 
   constructor(
-    private readonly reservationsRepository: ReservationsRepository,
     @Inject(PAYMENTS_SERVICE_NAME) private readonly client: ClientGrpc,
+    private readonly reservationsRepository: ReservationsRepository,
     private readonly logger: Logger,
   ) {}
 
@@ -32,6 +32,7 @@ export class ReservationsService implements OnModuleInit {
     this.paymentsService = this.client.getService<PaymentsServiceClient>(
       PAYMENTS_SERVICE_NAME,
     );
+    console.error('onModuleInit:::', this.paymentsService);
   }
 
   create(
@@ -51,6 +52,7 @@ export class ReservationsService implements OnModuleInit {
             userId,
             timestamp: new Date(),
           });
+
           return this.reservationsRepository.create(reservation);
         }),
         catchError((error) => {

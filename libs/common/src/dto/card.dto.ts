@@ -1,8 +1,6 @@
 import {
   IsCreditCard,
-  IsDefined,
   IsNotEmpty,
-  IsNotEmptyObject,
   IsNumber,
   IsOptional,
   IsString,
@@ -23,8 +21,7 @@ export class CardDto implements CardMessage {
   @IsNumber()
   expYear: number;
 
-  @IsDefined()
-  @IsNotEmptyObject()
+  @IsOptional()
   @ValidateNested()
   @Type(() => CardNetWorkDto)
   networks: CardNetWorkDto;

@@ -3,8 +3,8 @@ import { PaymentsModule } from './payments.module';
 import { Logger } from 'nestjs-pino';
 import { Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
-import { PAYMENTS_PACKAGE_NAME } from '@app/common';
 import { join } from 'path';
+import { PAYMENTS_PACKAGE_NAME } from '@app/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(PaymentsModule);

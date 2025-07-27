@@ -1,6 +1,6 @@
 import { Controller, UsePipes, ValidationPipe } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
-import { Ctx, EventPattern, RmqContext } from '@nestjs/microservices';
+import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 import { NotifyEmailDto } from './dto/notify-email.dto';
 
 @Controller()
@@ -9,7 +9,10 @@ export class NotificationsController {
 
   @EventPattern('notify_email')
   @UsePipes(new ValidationPipe())
-  async notifyEmail(data: NotifyEmailDto, @Ctx() context: RmqContext) {
+  async notifyEmail(
+    @Payload() data: NotifyEmailDto,
+    @Ctx() context: RmqContext,
+  ) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage();

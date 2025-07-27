@@ -8,7 +8,7 @@ service PaymentsService {
 
 message CreateChargeMessage {
     string email = 1;
-    int64 amount = 2;
+    int32 amount = 2;
     CardMessage card = 3;
 }
 
