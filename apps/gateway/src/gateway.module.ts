@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { GatewayController } from './gateway.controller';
-import { GatewayService } from './gateway.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LoggerModule } from '@app/common';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -30,7 +28,7 @@ import { IntrospectAndCompose } from '@apollo/gateway';
       inject: [ConfigService],
     }),
   ],
-  controllers: [GatewayController],
-  providers: [GatewayService],
+  controllers: [],
+  providers: [],
 })
 export class GatewayModule {}
