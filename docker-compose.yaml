@@ -11,7 +11,14 @@ services:
     env_file:
       - ./apps/reservations/.env
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/reservations/health']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   auth:
     build:
@@ -25,7 +32,8 @@ services:
     env_file:
       - ./apps/auth/.env
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
   payments:
     build:
@@ -36,7 +44,8 @@ services:
     env_file:
       - ./apps/payments/.env
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
 
   notifications:
     build:
@@ -47,18 +56,22 @@ services:
     env_file:
       - ./apps/notifications/.env
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
 
   gateway:
     build:
       context: .
       dockerfile: ./apps/gateway/Dockerfile
-      target: gateway-development
-    command: pnpm start:dev gateway
+    #   target: gateway-development
+    # command: pnpm start:dev gateway
     env_file:
       - ./apps/gateway/.env
     ports:
       - '3004:3004'
+    depends_on:
+      reservations:
+        condition: service_healthy
 
   # mongo:
   #   image: mongo:latest
@@ -72,8 +85,17 @@ services:
     command: --port=3006
     env_file:
       - .env
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      timeout: 20s
+      retries: 10
 
   rabbitmq:
     image: rabbitmq:latest
     ports:
       - '5672:5672'
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', 'check_running', '-q']
+      interval: 10s
+      timeout: 5s
+      retries: 5

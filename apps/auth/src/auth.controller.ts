@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Res } from '@nestjs/common';
+import { Controller, Post, UseGuards, Res, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import {
@@ -35,5 +35,10 @@ export class AuthController implements AuthServiceController {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
       roles: data.user.roles?.map((role) => role.name),
     };
+  }
+
+  @Get('health')
+  healthCheck() {
+    return { status: 'ok' };
   }
 }

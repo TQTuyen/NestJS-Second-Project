@@ -1,4 +1,4 @@
-import { Controller, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, UsePipes, ValidationPipe, Get } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import {
   PaymentsServiceController,
@@ -14,5 +14,10 @@ export class PaymentsController implements PaymentsServiceController {
   @UsePipes(new ValidationPipe())
   async createCharge(paymentsCreateChargeDto: PaymentsCreateChargeDto) {
     return this.paymentsService.createCharge(paymentsCreateChargeDto);
+  }
+
+  @Get('health')
+  healthCheck() {
+    return { status: 'ok' };
   }
 }

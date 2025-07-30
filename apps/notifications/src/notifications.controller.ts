@@ -1,4 +1,4 @@
-import { Controller, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, UsePipes, ValidationPipe, Get } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 import { NotifyEmailDto } from './dto/notify-email.dto';
@@ -20,5 +20,10 @@ export class NotificationsController {
     channel.ack(originalMsg);
 
     return this.notificationsService.notifyEmail(data);
+  }
+
+  @Get('health')
+  healthCheck() {
+    return { status: 'ok' };
   }
 }
