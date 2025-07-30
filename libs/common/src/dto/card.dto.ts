@@ -29,7 +29,7 @@ export class CardDto implements CardMessage {
   @IsOptional()
   @ValidateNested()
   @Type(() => CardNetWorkDto)
-  @Field(() => CardNetWorkDto)
+  @Field(() => CardNetWorkDto, { nullable: true })
   networks: CardNetWorkDto;
 
   @IsCreditCard()

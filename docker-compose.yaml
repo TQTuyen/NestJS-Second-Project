@@ -13,12 +13,6 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3000/reservations/health']
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
 
   auth:
     build:
@@ -69,9 +63,6 @@ services:
       - ./apps/gateway/.env
     ports:
       - '3004:3004'
-    depends_on:
-      reservations:
-        condition: service_healthy
 
   # mongo:
   #   image: mongo:latest
