@@ -71,4 +71,9 @@ export class PaymentsService {
       throw new UnprocessableEntityException(error);
     }
   }
+
+  async getPayments() {
+    const payments = await this.stripe.paymentIntents.list();
+    return payments.data;
+  }
 }
