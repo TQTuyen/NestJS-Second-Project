@@ -10,6 +10,9 @@ COPY pnpm-lock.yaml ./
 COPY tsconfig.json ./
 COPY nest-cli.json ./
 
+# Copy the specific app's package.json
+COPY apps/reservations/package.json ./apps/reservations/
+
 # Install pnpm globally
 RUN npm install -g pnpm
 RUN npm install -g @nestjs/cli
@@ -42,6 +45,9 @@ COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY tsconfig.json ./
 COPY nest-cli.json ./
+
+# Copy the specific app's package.json
+COPY apps/reservations/package.json ./apps/reservations/
 
 # Install pnpm globally
 RUN npm install -g pnpm
