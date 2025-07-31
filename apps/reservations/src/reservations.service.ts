@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
-import { ReservationsRepository } from './reservations.repository';
 import {
   CreateChargeResponse,
   PAYMENTS_SERVICE_NAME,
@@ -16,7 +15,7 @@ import {
 import { ClientGrpc } from '@nestjs/microservices';
 import { Logger } from 'nestjs-pino';
 import { catchError, map } from 'rxjs';
-import { Reservation } from './models/reservation.entity';
+import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class ReservationsService implements OnModuleInit {
@@ -24,7 +23,7 @@ export class ReservationsService implements OnModuleInit {
 
   constructor(
     @Inject(PAYMENTS_SERVICE_NAME) private readonly client: ClientGrpc,
-    private readonly reservationsRepository: ReservationsRepository,
+    private readonly prismaService: PrismaService,
     private readonly logger: Logger,
   ) {}
 
@@ -32,7 +31,6 @@ export class ReservationsService implements OnModuleInit {
     this.paymentsService = this.client.getService<PaymentsServiceClient>(
       PAYMENTS_SERVICE_NAME,
     );
-    console.error('onModuleInit:::', this.paymentsService);
   }
 
   create(
@@ -46,14 +44,15 @@ export class ReservationsService implements OnModuleInit {
       })
       .pipe(
         map((res: CreateChargeResponse) => {
-          const reservation = Reservation.create({
-            ...createReservationDto,
-            invoiceId: res.id,
-            userId,
-            timestamp: new Date(),
+          return this.prismaService.reservation.create({
+            data: {
+              startDate: createReservationDto.startDate,
+              endDate: createReservationDto.endDate,
+              invoiceId: res.id,
+              userId,
+              timestamp: new Date(),
+            },
           });
-
-          return this.reservationsRepository.create(reservation);
         }),
         catchError((error) => {
           this.logger.error(
@@ -66,25 +65,27 @@ export class ReservationsService implements OnModuleInit {
   }
 
   async findAll() {
-    return this.reservationsRepository.find({});
+    return this.prismaService.reservation.findMany();
   }
 
   async findOne(id: number) {
-    return this.reservationsRepository.findOne({
-      id,
+    return this.prismaService.reservation.findUnique({
+      where: {
+        id,
+      },
     });
   }
 
   async update(id: number, updateReservationDto: UpdateReservationDto) {
-    return this.reservationsRepository.findOneAndUpdate(
-      { id },
-      updateReservationDto,
-    );
+    return this.prismaService.reservation.update({
+      where: {
+        id,
+      },
+      data: updateReservationDto,
+    });
   }
 
   async remove(id: number) {
-    return this.reservationsRepository.findOneAndDelete({
-      id,
-    });
+    return this.prismaService.reservation.delete({ where: { id } });
   }
 }

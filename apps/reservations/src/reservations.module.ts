@@ -4,13 +4,10 @@ import { ReservationsController } from './reservations.controller';
 import {
   AUTH_PACKAGE_NAME,
   AUTH_SERVICE_NAME,
-  DatabaseModule,
   LoggerModule,
   PAYMENTS_PACKAGE_NAME,
   PAYMENTS_SERVICE_NAME,
 } from '@app/common';
-import { ReservationsRepository } from './reservations.repository';
-import { Reservation } from './models/reservation.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { ClientsModule, Transport } from '@nestjs/microservices';
@@ -21,18 +18,17 @@ import {
   ApolloFederationDriverConfig,
 } from '@nestjs/apollo';
 import { ReservationsResolver } from './reservations.resolver';
+import { PrismaService } from './prisma.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
-        // MONGODB_URI: Joi.string().required(),
+        DATABASE_URL: Joi.string().required(),
         PORT: Joi.number().required(),
       }),
     }),
-    DatabaseModule,
-    DatabaseModule.forFeature([Reservation]),
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
       autoSchemaFile: {
@@ -68,10 +64,6 @@ import { ReservationsResolver } from './reservations.resolver';
     ]),
   ],
   controllers: [ReservationsController],
-  providers: [
-    ReservationsService,
-    ReservationsRepository,
-    ReservationsResolver,
-  ],
+  providers: [ReservationsService, ReservationsResolver, PrismaService],
 })
 export class ReservationsModule {}

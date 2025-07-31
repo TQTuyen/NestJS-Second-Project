@@ -1,10 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { plainToInstance } from 'class-transformer';
-import { PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType({ isAbstract: true })
 export class AbstractEntity {
-  @PrimaryGeneratedColumn()
   @Field()
   id: number;
 
