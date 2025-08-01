@@ -15,8 +15,6 @@ export class UsersService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    await this.validateCreateUserDto(createUserDto);
-
     return this.prismaService.user.create({
       data: {
         ...createUserDto,
