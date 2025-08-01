@@ -13,6 +13,9 @@ COPY pnpm-lock.yaml ./
 COPY tsconfig.json ./
 COPY nest-cli.json ./
 
+# Copy prisma schema and migrations
+COPY apps/auth/prisma ./prisma
+
 # Copy the specific app's package.json
 COPY apps/auth/package.json ./apps/auth/
 
@@ -21,6 +24,9 @@ RUN npm install -g pnpm
 
 # Install dependencies
 RUN pnpm install
+
+# Generate Prisma client code
+RUN pnpm prisma generate
 
 # Copy the rest of the application code
 COPY libs libs
@@ -51,6 +57,9 @@ COPY pnpm-lock.yaml ./
 COPY tsconfig.json ./
 COPY nest-cli.json ./
 
+# Copy prisma schema and migrations
+COPY apps/auth/prisma ./prisma
+
 # Copy the specific app's package.json
 COPY apps/auth/package.json ./apps/auth/
 
@@ -60,6 +69,9 @@ RUN npm install -g pnpm
 # Install only production dependencies
 RUN pnpm install --prod
 
+# Generate Prisma client code
+RUN pnpm prisma generate
+
 # Copy the built application from the development stage
 COPY --from=auth-development /usr/src/app/dist ./dist
 
@@ -67,4 +79,4 @@ COPY --from=auth-development /usr/src/app/dist ./dist
 COPY proto proto
 
 # Run the application
-CMD ["node", "dist/apps/auth/main.js"]
+CMD ["pnpm", "run", "start:prod", "dist/apps/auth/main.js"]

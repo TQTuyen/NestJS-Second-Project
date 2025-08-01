@@ -10,6 +10,9 @@ COPY pnpm-lock.yaml ./
 COPY tsconfig.json ./
 COPY nest-cli.json ./
 
+# Copy prisma files
+COPY apps/reservations/prisma ./prisma
+
 # Copy the specific app's package.json
 COPY apps/reservations/package.json ./apps/reservations/
 
@@ -19,6 +22,9 @@ RUN npm install -g @nestjs/cli
 
 # Install dependencies
 RUN pnpm install
+
+# Generate prisma client code
+RUN pnpm prisma generate
 
 # Copy the rest of the application code
 COPY libs libs
@@ -46,6 +52,9 @@ COPY pnpm-lock.yaml ./
 COPY tsconfig.json ./
 COPY nest-cli.json ./
 
+# Copy prisma files
+COPY apps/reservations/prisma ./prisma
+
 # Copy the specific app's package.json
 COPY apps/reservations/package.json ./apps/reservations/
 
@@ -55,6 +64,9 @@ RUN npm install -g pnpm
 # Install only production dependencies
 RUN pnpm install --prod
 
+# Generate prisma client code
+RUN pnpm prisma generate
+
 # Copy the built application from the development stage
 COPY --from=reservations-development /usr/src/app/dist ./dist
 
@@ -62,4 +74,4 @@ COPY --from=reservations-development /usr/src/app/dist ./dist
 COPY proto proto
 
 # Run the application
-CMD ["node", "dist/apps/reservations/main.js"]
+CMD ["pnpm", "run", "start:prod", "dist/apps/reservations/main.js"]

@@ -4,31 +4,33 @@ import {
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { GetUserDto } from './dto/get-user.dto';
-import { Role, User } from '@app/common';
+import { User } from '@app/common';
+import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     await this.validateCreateUserDto(createUserDto);
 
-    const user = User.create({
-      ...createUserDto,
-      password: await bcrypt.hash(createUserDto.password, 10),
-      roles: createUserDto.roles.map((role) => Role.create(role)),
+    return this.prismaService.user.create({
+      data: {
+        ...createUserDto,
+        password: await bcrypt.hash(createUserDto.password, 10),
+      },
     });
-    return this.usersRepository.create(user);
   }
 
-  private async validateCreateUserDto(createUserDto: CreateUserDto) {
+  private async validateCreateUserDto({ email }: CreateUserDto) {
     try {
-      await this.usersRepository.findOne({
-        email: createUserDto.email,
+      await this.prismaService.user.findUnique({
+        where: {
+          email,
+        },
       });
     } catch {
       return;
@@ -37,7 +39,15 @@ export class UsersService {
   }
 
   async verifyUser(email: string, password: string) {
-    const user = await this.usersRepository.findOne({ email });
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
@@ -48,9 +58,7 @@ export class UsersService {
   }
 
   async getUser(getUserDto: GetUserDto): Promise<User> {
-    const User = await this.usersRepository.findOne(getUserDto, {
-      roles: true,
-    });
+    const User = await this.prismaService.user.findFirst({ where: getUserDto });
 
     if (!User) {
       throw new NotFoundException('User not found');
@@ -60,6 +68,6 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    return this.usersRepository.find({});
+    return this.prismaService.user.findMany();
   }
 }

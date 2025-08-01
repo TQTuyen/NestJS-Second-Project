@@ -33,7 +33,7 @@ export class AuthController implements AuthServiceController {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       password: data.user.password,
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return
-      roles: data.user.roles?.map((role) => role.name),
+      roles: data.user.roles,
     };
   }
 

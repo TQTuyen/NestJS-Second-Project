@@ -11,8 +11,7 @@ services:
     env_file:
       - ./apps/reservations/.env
     depends_on:
-      mysql:
-        condition: service_healthy
+      - postgres
 
   auth:
     build:
@@ -26,8 +25,7 @@ services:
     env_file:
       - ./apps/auth/.env
     depends_on:
-      mysql:
-        condition: service_healthy
+      - postgres
 
   payments:
     build:
@@ -69,17 +67,17 @@ services:
   #   ports:
   #     - '27017:27017'
 
-  mysql:
-    image: mysql:latest
-    ports:
-      - '3006:3006'
-    command: --port=3006
-    env_file:
-      - .env
-    healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
-      timeout: 20s
-      retries: 10
+  # mysql:
+  #   image: mysql:latest
+  #   ports:
+  #     - '3006:3006'
+  #   command: --port=3006
+  #   env_file:
+  #     - .env
+  #   healthcheck:
+  #     test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+  #     timeout: 20s
+  #     retries: 10
 
   rabbitmq:
     image: rabbitmq:latest
